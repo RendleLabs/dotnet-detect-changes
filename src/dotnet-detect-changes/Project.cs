@@ -10,7 +10,7 @@ public class Project
 
     private Project(string projectFilePath, XDocument document)
     {
-        _projectDirectory = Path.GetDirectoryName(projectFilePath)!;
+        _projectDirectory = PathHelper.FixSeparator(Path.GetDirectoryName(projectFilePath)!);
         _document = document;
     }
 
@@ -98,6 +98,7 @@ public class Project
             {
                 if (projectReference.Attribute("Include")?.Value is { Length: > 0 } include)
                 {
+                    include = PathHelper.FixSeparator(include);
                     yield return Path.GetFullPath(include, _projectDirectory);
                 }
             }
