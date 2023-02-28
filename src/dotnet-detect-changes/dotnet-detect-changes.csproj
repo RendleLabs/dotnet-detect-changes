@@ -13,6 +13,10 @@
     <ToolCommandName>dotnet-detect-changes</ToolCommandName>
     <PackageId>dotnet-detect-changes</PackageId>
     <PackageVersion>1.0.0-beta1</PackageVersion>
+    <RepositoryUrl>https://github.com/RendleLabs/dotnet-detect-changes</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/RendleLabs/dotnet-detect-changes</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>git ci</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
