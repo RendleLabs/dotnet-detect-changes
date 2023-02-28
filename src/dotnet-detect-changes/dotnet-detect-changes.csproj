@@ -17,7 +17,12 @@
     <PackageProjectUrl>https://github.com/RendleLabs/dotnet-detect-changes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>git ci</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
