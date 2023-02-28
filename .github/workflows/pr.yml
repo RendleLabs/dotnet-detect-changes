@@ -1,0 +1,29 @@
+name: PR build and test
+
+on:
+  pull_request:
+    branches: [ 'main' ]
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET Core 6.0
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    
+    - name: Install detect-changes
+      run: dotnet tool install -g dotnet-detect-changes
+    
+    - name: Detect changes
+      id: detect
+      run: dotnet detect-changes ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+    
+    - name: Run tests
+      if: steps.detect.changed == 'true'
+      run: echo "RUNNING TESTS"
