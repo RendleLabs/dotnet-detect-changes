@@ -24,7 +24,7 @@ jobs:
     
     - name: Detect changes
       id: detect
-      run: dotnet detect-changes ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+      run: dotnet detect-changes ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj
     
     - name: Debug
       run: echo ${{ steps.detect.outputs.changed }}
