@@ -57,6 +57,11 @@ public static class Differ
         return files;
     }
 
+    /// <summary>
+    /// Test whether the file-system containing a directory is case-sensitive
+    /// </summary>
+    /// <param name="projectDirectory"></param>
+    /// <returns></returns>
     public static bool FileSystemIsCaseSensitive(string projectDirectory)
     {
         var guid = Guid.NewGuid();

@@ -1,7 +1,4 @@
-﻿using System.Reflection.Emit;
-using System.Xml.Linq;
-using LibGit2Sharp;
-using RendleLabs.DetectChanges;
+﻿using RendleLabs.DetectChanges;
 using RendleLabs.DetectChanges.Git;
 
 if (args.Length == 0)
