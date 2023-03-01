@@ -18,9 +18,10 @@ public static class Differ
         var rootDirectory = Path.GetDirectoryName(repoRoot.TrimEnd('/', '\\'))!;
 
         var commit = repository.Commits.First();
+        Console.WriteLine($"Latest:   {commit.Sha} {commit.Message} {commit.MessageShort}");
         var previousCommit = repository.Commits.Skip(1).FirstOrDefault();
-
         if (previousCommit is null) return null;
+        Console.WriteLine($"Previous: {previousCommit.Sha} {previousCommit.Message} {previousCommit.MessageShort}");
 
         var comparer = FileSystemIsCaseSensitive(rootDirectory) ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
         var files = new HashSet<string>(comparer);
