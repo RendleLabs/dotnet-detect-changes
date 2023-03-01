@@ -12,7 +12,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-detect-changes</ToolCommandName>
     <PackageId>dotnet-detect-changes</PackageId>
-    <PackageVersion>1.0.0-beta2</PackageVersion>
+    <PackageVersion>1.0.0-beta3</PackageVersion>
     <RepositoryUrl>https://github.com/RendleLabs/dotnet-detect-changes</RepositoryUrl>
     <PackageProjectUrl>https://github.com/RendleLabs/dotnet-detect-changes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

@@ -23,6 +23,15 @@ if (changedFiles is null)
     return 0;
 }
 
+Console.WriteLine("Changed files:");
+Console.WriteLine();
+foreach (var file in changedFiles)
+{
+    Console.WriteLine(file);
+}
+
+return 0;
+
 foreach (var arg in args)
 {
     var filePath = Path.GetFullPath(arg);
