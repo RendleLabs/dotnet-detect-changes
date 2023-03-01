@@ -17,16 +17,33 @@ public static class Differ
 
         var rootDirectory = Path.GetDirectoryName(repoRoot.TrimEnd('/', '\\'))!;
 
-        var commit = repository.Commits.First();
-        Console.WriteLine($"Latest:   {commit.Sha} {commit.Message} {commit.MessageShort}");
-        var previousCommit = repository.Commits.Skip(1).FirstOrDefault();
-        if (previousCommit is null) return null;
-        Console.WriteLine($"Previous: {previousCommit.Sha} {previousCommit.Message} {previousCommit.MessageShort}");
+        using var enumerator = repository.Commits.GetEnumerator();
+        var latest = enumerator.MoveNext() ? enumerator.Current : null;
+
+        if (latest is null) return null;
+
+        var previous = enumerator.MoveNext() ? enumerator.Current : null;
+
+        if (previous is null) return null;
+
+        if (latest.Message.StartsWith($"Merge {previous.Sha} into "))
+        {
+            latest = previous;
+            previous = enumerator.MoveNext() ? enumerator.Current : null;
+            if (previous is null) return null;
+        }
+        Console.WriteLine($"Latest:   {latest.Sha} {latest.Message} {latest.MessageShort}");
+        Console.WriteLine($"Previous: {previous.Sha} {previous.Message} {previous.MessageShort}");
+
+        // var commit = repository.Commits.First();
+        // Console.WriteLine($"Latest:   {commit.Sha} {commit.Message} {commit.MessageShort}");
+        // var previousCommit = repository.Commits.Skip(1).FirstOrDefault();
+        // if (previousCommit is null) return null;
 
         var comparer = FileSystemIsCaseSensitive(rootDirectory) ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
         var files = new HashSet<string>(comparer);
         
-        var changes = repository.Diff.Compare<TreeChanges>(commit.Tree, previousCommit.Tree);
+        var changes = repository.Diff.Compare<TreeChanges>(latest.Tree, previous.Tree);
 
         foreach (var change in changes)
         {
