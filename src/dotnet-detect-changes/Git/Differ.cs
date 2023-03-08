@@ -14,9 +14,33 @@ public static class Differ
         }
 
         var repository = new Repository(repoRoot);
+        
+        var changes = GetChanges(repository);
+
+        if (changes is null) return null;
 
         var rootDirectory = Path.GetDirectoryName(repoRoot.TrimEnd('/', '\\'))!;
+        var comparer = FileSystemIsCaseSensitive(rootDirectory) ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
+        var files = new HashSet<string>(comparer);
+        
+        foreach (var change in changes)
+        {
+            files.Add(Path.Combine(rootDirectory, PathHelper.FixSeparator(change.Path)));
+        }
 
+        return files;
+    }
+
+    private static TreeChanges? GetChanges(Repository repository)
+    {
+        if (TryGetGithubActionsRefs(out var baseRef, out var headRef))
+        {
+            var baseTree = repository.Branches[baseRef].Tip.Tree;
+            var headTree = repository.Branches[headRef].Tip.Tree;
+
+            return repository.Diff.Compare<TreeChanges>(baseTree, headTree);
+        }
+        
         using var enumerator = repository.Commits.GetEnumerator();
         var latest = enumerator.MoveNext() ? enumerator.Current : null;
 
@@ -33,28 +57,15 @@ public static class Differ
             previous = enumerator.MoveNext() ? enumerator.Current : null;
             if (previous is null) return null;
         }
-
-        var comparer = FileSystemIsCaseSensitive(rootDirectory) ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
-        var files = new HashSet<string>(comparer);
         
-        var changes = repository.Diff.Compare<TreeChanges>(latest.Tree, previous.Tree);
+        return repository.Diff.Compare<TreeChanges>(latest.Tree, previous.Tree);
+    }
 
-        foreach (var change in changes)
-        {
-            var path = change.Path;
-            if (Path.DirectorySeparatorChar == '/')
-            {
-                path = path.Replace('\\', '/');
-            }
-            else if (Path.DirectorySeparatorChar == '\\')
-            {
-                path = path.Replace('/', '\\');
-            }
-
-            files.Add(Path.Combine(rootDirectory, path));
-        }
-
-        return files;
+    private static bool TryGetGithubActionsRefs(out string? baseRef, out string? headRef)
+    {
+        baseRef = Environment.GetEnvironmentVariable("GITHUB_BASE_REF");
+        headRef = Environment.GetEnvironmentVariable("GITHUB_HEAD_REF");
+        return baseRef is { Length: > 0 } && headRef is { Length: > 0 };
     }
 
     /// <summary>

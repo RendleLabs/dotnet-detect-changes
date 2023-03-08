@@ -1,0 +1,5 @@
+<Project>
+    <PropertyGroup>
+        <Something>Foo</Something>
+    </PropertyGroup>
+</Project>
