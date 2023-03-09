@@ -21,7 +21,13 @@ jobs:
           dotnet-version: 6.0.x
       
       - name: Debug
-        run: echo $GITHUB_BASE_REF $GITHUB_HEAD_REF $GITHUB_REF
+        run: echo BASE $GITHUB_BASE_REF HEAD $GITHUB_HEAD_REF REF $GITHUB_REF REF_TYPE $GITHUB_REF_TYPE
+      
+      - name: Debug 2
+        run: echo ID ${{ github.event.commits[0].id }} TREE_ID ${{ github.event.commits[0].tree_id }}
+      
+      - name: Debug 3
+        run: echo REF ${{ github.event.ref }}
       
       # - name: Run
       #   run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
