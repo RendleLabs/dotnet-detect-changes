@@ -23,11 +23,14 @@ jobs:
       - name: Build
         run: dotnet build ./src/dotnet-detect-changes/dotnet-detect-changes.csproj
       
+      - name: Debug
+        run: echo dotnet run --no-build --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj -- --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+      
       - name: Run
         run: dotnet run --no-build --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj -- --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
       
-      # - name: Show output
-      #   run: cat $GITHUB_OUTPUT
+      - name: Show output
+        run: cat $GITHUB_OUTPUT
 
 #      - name: Install detect-changes
 #        run: dotnet tool install -g --prerelease dotnet-detect-changes
