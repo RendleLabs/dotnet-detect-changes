@@ -1,62 +1,21 @@
-﻿using LibGit2Sharp;
+﻿using System.CommandLine;
 using RendleLabs.DetectChanges;
-using RendleLabs.DetectChanges.Git;
-using Project = RendleLabs.DetectChanges.Project;
 
-if (args.Length == 0)
+var baseOption = new Option<string>("--base", "The base ref to compare against.");
+var headOption = new Option<string>("--head", "The head ref with changes to scan.");
+
+var projectsArgument = new Argument<string[]>("projects", "Project(s) to scan for changes.");
+
+var rootCommand = new Command("detect")
 {
-    Console.Error.WriteLine("Usage: changedetector PROJECT [PROJECT]");
-    return 1;
-}
+    baseOption,
+    headOption,
+    projectsArgument
+};
 
-var first = Path.GetFullPath(args[0]);
-if (PathHelper.IsProjectFile(first))
+rootCommand.SetHandler((baseOptionValue, headOptionValue, projectsArgumentValue) =>
 {
-    first = Path.GetDirectoryName(first)!;
-}
+    new DetectCommand(baseOptionValue, headOptionValue, projectsArgumentValue).Execute();
+}, baseOption, headOption, projectsArgument);
 
-var repoRoot = Path.GetDirectoryName(Repository.Discover(first).TrimEnd('/', '\\'))!;
-
-var changedFiles = Differ.GetChangedFiles(first);
-if (changedFiles is null)
-{
-    Console.WriteLine("changed=true");
-    return 0;
-}
-
-foreach (var arg in args)
-{
-    var filePath = Path.GetFullPath(arg);
-    if (!PathHelper.IsProjectFile(filePath))
-    {
-        if (Directory.Exists(filePath))
-        {
-            var projectFiles = Directory.EnumerateFiles(filePath, "*proj")
-                .Where(PathHelper.IsProjectFile)
-                .ToArray();
-            
-            if (projectFiles.Length == 1)
-            {
-                filePath = projectFiles[0];
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
-
-    var project = Project.Load(filePath, repoRoot);
-
-    foreach (var projectFile in project.EnumerateFiles())
-    {
-        if (changedFiles.Contains(projectFile))
-        {
-            Console.WriteLine("changed=true");
-            return 0;
-        }
-    }
-}
-
-Console.WriteLine("changed=false");
-return 0;
+rootCommand.Invoke(args);

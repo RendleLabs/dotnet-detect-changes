@@ -4,7 +4,7 @@ namespace RendleLabs.DetectChanges.Git;
 
 public static class Differ
 {
-    public static HashSet<string>? GetChangedFiles(string projectDirectory)
+    public static HashSet<string>? GetChangedFiles(string projectDirectory, string? baseRef, string? headRef)
     {
         var repoRoot = Repository.Discover(projectDirectory);
 
@@ -15,7 +15,7 @@ public static class Differ
 
         var repository = new Repository(repoRoot);
         
-        var changes = GetChanges(repository);
+        var changes = GetChanges(repository, baseRef, headRef);
 
         if (changes is null) return null;
 
@@ -31,9 +31,9 @@ public static class Differ
         return files;
     }
 
-    private static TreeChanges? GetChanges(Repository repository)
+    private static TreeChanges? GetChanges(Repository repository, string? baseRef, string? headRef)
     {
-        if (TryGetGithubActionsRefs(out var baseRef, out var headRef))
+        if (baseRef is { Length: > 0 } && headRef is { Length: > 0 })
         {
             var baseTree = repository.Branches[baseRef].Tip.Tree;
             var headTree = repository.Branches[headRef].Tip.Tree;
@@ -59,13 +59,6 @@ public static class Differ
         }
         
         return repository.Diff.Compare<TreeChanges>(latest.Tree, previous.Tree);
-    }
-
-    private static bool TryGetGithubActionsRefs(out string? baseRef, out string? headRef)
-    {
-        baseRef = Environment.GetEnvironmentVariable("GITHUB_BASE_REF");
-        headRef = Environment.GetEnvironmentVariable("GITHUB_HEAD_REF");
-        return baseRef is { Length: > 0 } && headRef is { Length: > 0 };
     }
 
     /// <summary>

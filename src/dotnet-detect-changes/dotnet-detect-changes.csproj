@@ -14,7 +14,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-detect-changes</ToolCommandName>
     <PackageId>dotnet-detect-changes</PackageId>
-    <PackageVersion>1.0.0-beta6</PackageVersion>
+    <PackageVersion>1.0.0-beta7</PackageVersion>
     <RepositoryUrl>https://github.com/RendleLabs/dotnet-detect-changes</RepositoryUrl>
     <PackageProjectUrl>https://github.com/RendleLabs/dotnet-detect-changes</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.27.0-preview-0182" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
 </Project>
