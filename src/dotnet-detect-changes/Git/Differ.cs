@@ -33,14 +33,21 @@ public static class Differ
 
     private static TreeChanges? GetChanges(Repository repository, string? baseRef, string? headRef)
     {
-        foreach (var branch in repository.Branches)
-        {
-            Console.WriteLine(branch.CanonicalName);
-        }
         if (baseRef is { Length: > 0 } && headRef is { Length: > 0 })
         {
-            var baseTree = repository.Branches[baseRef].Tip.Tree;
-            var headTree = repository.Branches[headRef].Tip.Tree;
+            Console.WriteLine($"Checking {baseRef} against {headRef}");
+            
+            foreach (var branch in repository.Branches)
+            {
+                Console.WriteLine(branch.CanonicalName);
+            }
+            
+            var baseBranch = repository.Branches[baseRef];
+            var baseCommit = baseBranch.Tip;
+            var baseTree = baseCommit.Tree;
+            var headBranch = repository.Branches[headRef];
+            var headCommit = headBranch.Tip;
+            var headTree = headCommit.Tree;
 
             return repository.Diff.Compare<TreeChanges>(baseTree, headTree);
         }
