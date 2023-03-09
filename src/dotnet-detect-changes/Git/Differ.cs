@@ -14,7 +14,7 @@ public static class Differ
         }
 
         var repository = new Repository(repoRoot);
-        
+
         var changes = GetChanges(repository, baseRef, headRef);
 
         if (changes is null) return null;
@@ -22,7 +22,7 @@ public static class Differ
         var rootDirectory = Path.GetDirectoryName(repoRoot.TrimEnd('/', '\\'))!;
         var comparer = FileSystemIsCaseSensitive(rootDirectory) ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
         var files = new HashSet<string>(comparer);
-        
+
         foreach (var change in changes)
         {
             files.Add(Path.Combine(rootDirectory, PathHelper.FixSeparator(change.Path)));
@@ -36,22 +36,22 @@ public static class Differ
         if (baseRef is { Length: > 0 } && headRef is { Length: > 0 })
         {
             Console.WriteLine($"Checking {baseRef} against {headRef}");
-            
+
             foreach (var branch in repository.Branches)
             {
                 Console.WriteLine(branch.CanonicalName);
             }
-            
-            var baseBranch = repository.Branches["refs/remotes/origin/main"];
-            var baseCommit = baseBranch.Tip;
-            var baseTree = baseCommit.Tree;
-            var headBranch = repository.Branches[headRef];
-            var headCommit = headBranch.Tip;
-            var headTree = headCommit.Tree;
+
+            var baseBranch = repository.Branches[baseRef] ?? repository.Branches[$"refs/remotes/origin/{baseRef}"];
+            var baseTree = baseBranch?.Tip?.Tree;
+            var headBranch = repository.Branches[headRef] ?? repository.Branches[$"refs/remotes/origin/{headRef}"];
+            var headTree = headBranch?.Tip?.Tree;
+
+            if (baseTree is null || headTree is null) return null;
 
             return repository.Diff.Compare<TreeChanges>(baseTree, headTree);
         }
-        
+
         using var enumerator = repository.Commits.GetEnumerator();
         var latest = enumerator.MoveNext() ? enumerator.Current : null;
 
@@ -68,7 +68,7 @@ public static class Differ
             previous = enumerator.MoveNext() ? enumerator.Current : null;
             if (previous is null) return null;
         }
-        
+
         return repository.Diff.Compare<TreeChanges>(latest.Tree, previous.Tree);
     }
 
