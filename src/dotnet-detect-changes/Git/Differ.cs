@@ -4,7 +4,7 @@ namespace RendleLabs.DetectChanges.Git;
 
 public static class Differ
 {
-    public static HashSet<string>? GetChangedFiles(string projectDirectory, string? baseRef, string? headRef, string? fromCommit)
+    public static HashSet<string>? GetChangedFiles(string projectDirectory, string? baseRef, string? headRef, string? baseSha)
     {
         var repoRoot = Repository.Discover(projectDirectory);
 
@@ -20,9 +20,9 @@ public static class Differ
         {
             changes = GetChanges(repository, baseRef, headRef);
         }
-        else if (fromCommit is { Length: > 0 })
+        else if (baseSha is { Length: > 0 })
         {
-            changes = GetChanges(repository, fromCommit);
+            changes = GetChanges(repository, baseSha);
         }
         else
         {
@@ -43,7 +43,7 @@ public static class Differ
         return files;
     }
 
-    private static TreeChanges? GetChanges(Repository repository, string fromCommit)
+    private static TreeChanges? GetChanges(Repository repository, string baseSha)
     {
         using var enumerator = repository.Commits.GetEnumerator();
         
@@ -51,17 +51,9 @@ public static class Differ
         while (enumerator.MoveNext())
         {
             var commit = enumerator.Current;
-            if (commit?.Id.Sha == fromCommit) break;
-        }
-
-        // Then get the one before that, which is the base we're comparing to
-        if (enumerator.MoveNext())
-        {
-            var previous = enumerator.Current;
-
-            if (previous is not null)
+            if (commit?.Id.Sha == baseSha)
             {
-                return repository.Diff.Compare<TreeChanges>(previous.Tree, repository.Head.Tip.Tree);
+                return repository.Diff.Compare<TreeChanges>(commit.Tree, repository.Head.Tip.Tree);
             }
         }
 

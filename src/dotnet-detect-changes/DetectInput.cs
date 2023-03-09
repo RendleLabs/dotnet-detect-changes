@@ -8,14 +8,14 @@ public class DetectCommand
 {
     private readonly string? _baseRef;
     private readonly string? _headRef;
-    private readonly string _fromCommit;
+    private readonly string _baseSha;
     private readonly string[] _projects;
 
-    public DetectCommand(string? baseRef, string? headRef, string fromCommit, string[] projects)
+    public DetectCommand(string? baseRef, string? headRef, string baseSha, string[] projects)
     {
         _baseRef = baseRef;
         _headRef = headRef;
-        _fromCommit = fromCommit;
+        _baseSha = baseSha;
         _projects = projects;
     }
     
@@ -29,7 +29,7 @@ public class DetectCommand
 
         var repoRoot = Path.GetDirectoryName(Repository.Discover(first).TrimEnd('/', '\\'))!;
 
-        var changedFiles = Differ.GetChangedFiles(first, _baseRef, _headRef, _fromCommit);
+        var changedFiles = Differ.GetChangedFiles(first, _baseRef, _headRef, _baseSha);
         
         if (changedFiles is null)
         {

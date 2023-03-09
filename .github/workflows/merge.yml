@@ -15,30 +15,27 @@ jobs:
         with:
           fetch-depth: 0
       
+      - name: Setup .NET Core 6.0
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build
+        run: dotnet build ./src/dotnet-detect-changes/dotnet-detect-changes.csproj
+
+      - name: Run
+        run: dotnet run --no-build --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --base-sha ${{ github.event.before }} ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+
+      - name: Install detect-changes
+        run: dotnet tool install -g --prerelease dotnet-detect-changes
+
       - name: Debug
-        run: echo ${{ github.event.before }}
+        run: echo $GITHUB_BASE_REF $GITHUB_HEAD_REF
 
-#      - name: Setup .NET Core 6.0
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: 6.0.x
-#
-#      - name: Build
-#        run: dotnet build ./src/dotnet-detect-changes/dotnet-detect-changes.csproj
-#
-#      - name: Run
-#        run: dotnet run --no-build --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --from-commit ${{ github.event.commits[0].id }} ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+      - name: Detect changes
+        id: detect
+        run: dotnet detect-changes --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
 
-#      - name: Install detect-changes
-#        run: dotnet tool install -g --prerelease dotnet-detect-changes
-#      
-#      - name: Debug
-#        run: echo $GITHUB_BASE_REF $GITHUB_HEAD_REF
-#
-#      - name: Detect changes
-#        id: detect
-#        run: dotnet detect-changes --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
-#      
   build:
     name: "Build"
     needs: detect

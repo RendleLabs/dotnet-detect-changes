@@ -1,31 +1,31 @@
 ﻿using System.CommandLine;
 using RendleLabs.DetectChanges;
 
-var baseOption = new Option<string>("--base", "The base ref to compare against.");
-var headOption = new Option<string>("--head", "The head ref with changes to scan.");
-var fromCommitOption = new Option<string>("--from-commit", "The first commit in the push.");
+var baseRefOption = new Option<string>("--base-ref", "The base ref to compare against.");
+var headRefOption = new Option<string>("--head-ref", "The head ref with changes to scan.");
+var baseShaOption = new Option<string>("--base-sha", "The latest commit before the push.");
 
 var projectsArgument = new Argument<string[]>("projects", "Project(s) to scan for changes.");
 
 var rootCommand = new Command("detect")
 {
-    baseOption,
-    headOption,
-    fromCommitOption,
+    baseRefOption,
+    headRefOption,
+    baseShaOption,
     projectsArgument
 };
 
-rootCommand.SetHandler((baseOptionValue, headOptionValue, fromCommitOptionValue, projectsArgumentValue) =>
+rootCommand.SetHandler((baseRef, headRef, baseSha, projects) =>
 {
     try
     {
-        new DetectCommand(baseOptionValue, headOptionValue, fromCommitOptionValue, projectsArgumentValue).Execute();
+        new DetectCommand(baseRef, headRef, baseSha, projects).Execute();
     }
     catch (Exception ex)
     {
         Console.WriteLine(ex);
         throw;
     }
-}, baseOption, headOption, fromCommitOption, projectsArgument);
+}, baseRefOption, headRefOption, baseShaOption, projectsArgument);
 
 rootCommand.Invoke(args);
