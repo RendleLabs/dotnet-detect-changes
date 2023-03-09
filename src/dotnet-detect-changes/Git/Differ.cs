@@ -45,19 +45,11 @@ public static class Differ
 
     private static TreeChanges? GetChanges(Repository repository, string baseSha)
     {
-        using var enumerator = repository.Commits.GetEnumerator();
-        
-        // Newest commit is first in list, so cycle through looking for specified commit
-        while (enumerator.MoveNext())
-        {
-            var commit = enumerator.Current;
-            if (commit?.Id.Sha == baseSha)
-            {
-                return repository.Diff.Compare<TreeChanges>(commit.Tree, repository.Head.Tip.Tree);
-            }
-        }
+        var commit = repository.Commits.FirstOrDefault(c => c.Sha == baseSha);
 
-        return null;
+        return commit is null
+            ? null :
+            repository.Diff.Compare<TreeChanges>(commit.Tree, repository.Head.Tip.Tree);
     }
     
     private static TreeChanges? GetChanges(Repository repository, string baseRef, string headRef)
