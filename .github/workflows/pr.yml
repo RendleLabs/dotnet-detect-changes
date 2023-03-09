@@ -6,6 +6,8 @@ on:
 
 jobs:
   detect:
+    name: Detect changes
+    runs-on: ubuntu-latest
     outputs:
       changes: ${{ steps.detect.outputs.changed }}
     steps:
