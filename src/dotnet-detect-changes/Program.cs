@@ -15,7 +15,15 @@ var rootCommand = new Command("detect")
 
 rootCommand.SetHandler((baseOptionValue, headOptionValue, projectsArgumentValue) =>
 {
-    new DetectCommand(baseOptionValue, headOptionValue, projectsArgumentValue).Execute();
+    try
+    {
+        new DetectCommand(baseOptionValue, headOptionValue, projectsArgumentValue).Execute();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        throw;
+    }
 }, baseOption, headOption, projectsArgument);
 
 rootCommand.Invoke(args);
