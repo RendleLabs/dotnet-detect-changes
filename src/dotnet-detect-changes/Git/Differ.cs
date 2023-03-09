@@ -42,7 +42,7 @@ public static class Differ
                 Console.WriteLine(branch.CanonicalName);
             }
             
-            var baseBranch = repository.Branches[baseRef];
+            var baseBranch = repository.Branches["refs/remotes/origin/main"];
             var baseCommit = baseBranch.Tip;
             var baseTree = baseCommit.Tree;
             var headBranch = repository.Branches[headRef];
