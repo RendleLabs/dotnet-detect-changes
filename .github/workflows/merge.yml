@@ -29,8 +29,8 @@ jobs:
       - name: Debug 3
         run: echo REF ${{ github.event.ref }}
       
-      # - name: Run
-      #   run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
+      - name: Run
+        run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --from-commit ${{ github.event.commits[0].id }} ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
 
 #      - name: Install detect-changes
 #        run: dotnet tool install -g --prerelease dotnet-detect-changes
