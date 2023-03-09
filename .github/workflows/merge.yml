@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       
       - name: Debug
-        run: echo ${{ github.event.commits.length }}
+        run: echo ${{ github.event.after }}
 
 #      - name: Setup .NET Core 6.0
 #        uses: actions/setup-dotnet@v3
