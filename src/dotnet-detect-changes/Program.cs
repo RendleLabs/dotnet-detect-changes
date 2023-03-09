@@ -1,58 +1,29 @@
-﻿using System.Reflection.Emit;
-using System.Xml.Linq;
-using LibGit2Sharp;
+﻿using System.CommandLine;
 using RendleLabs.DetectChanges;
-using RendleLabs.DetectChanges.Git;
 
-if (args.Length == 0)
-{
-    Console.Error.WriteLine("Usage: changedetector PROJECT");
-    return 1;
-}
+var baseOption = new Option<string>("--base", "The base ref to compare against.");
+var headOption = new Option<string>("--head", "The head ref with changes to scan.");
 
-var first = Path.GetFullPath(args[0]);
-if (first.EndsWith(".csproj"))
-{
-    first = Path.GetDirectoryName(first)!;
-}
+var projectsArgument = new Argument<string[]>("projects", "Project(s) to scan for changes.");
 
-var changedFiles = Differ.GetChangedFiles(first);
-if (changedFiles is null)
+var rootCommand = new Command("detect")
 {
-    Console.WriteLine("changed=true");
-    return 0;
-}
+    baseOption,
+    headOption,
+    projectsArgument
+};
 
-foreach (var arg in args)
+rootCommand.SetHandler((baseOptionValue, headOptionValue, projectsArgumentValue) =>
 {
-    var filePath = Path.GetFullPath(arg);
-    if (!filePath.EndsWith(".csproj", StringComparison.CurrentCultureIgnoreCase))
+    try
     {
-        if (Directory.Exists(filePath))
-        {
-            var projectFiles = Directory.EnumerateFiles(filePath, "*.csproj").ToArray();
-            if (projectFiles.Length == 1)
-            {
-                filePath = projectFiles[0];
-            }
-            else
-            {
-                continue;
-            }
-        }
+        new DetectCommand(baseOptionValue, headOptionValue, projectsArgumentValue).Execute();
     }
-
-    var project = Project.Load(filePath);
-
-    foreach (var projectFile in project.EnumerateFiles())
+    catch (Exception ex)
     {
-        if (changedFiles.Contains(projectFile))
-        {
-            Console.WriteLine("changed=true");
-            return 0;
-        }
+        Console.WriteLine(ex);
+        throw;
     }
-}
+}, baseOption, headOption, projectsArgument);
 
-Console.WriteLine("changed=false");
-return 0;
+rootCommand.Invoke(args);
