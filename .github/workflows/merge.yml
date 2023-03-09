@@ -14,23 +14,17 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      
+      - name: Debug
+        run: echo Commits ${{ github.event.commits.length }}
 
       - name: Setup .NET Core 6.0
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
       
-      - name: Debug
-        run: echo BASE $GITHUB_BASE_REF HEAD $GITHUB_HEAD_REF REF $GITHUB_REF REF_TYPE $GITHUB_REF_TYPE
-      
-      - name: Debug 2
-        run: echo ID ${{ github.event.commits[0].id }} TREE_ID ${{ github.event.commits[0].tree_id }}
-      
-      - name: Debug 3
-        run: echo REF ${{ github.event.ref }}
-      
       - name: Run
-        run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --from-commit ${{ github.event.commits[0].id }} ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj
+        run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --from-commit ${{ github.event.commits[0].id }} ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
 
 #      - name: Install detect-changes
 #        run: dotnet tool install -g --prerelease dotnet-detect-changes
@@ -42,28 +36,27 @@ jobs:
 #        id: detect
 #        run: dotnet detect-changes --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
 #      
-#  build:
-#    name: "Build"
-#    needs: detect
-#    if: needs.detect.outputs.changed == 'true'
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#    - uses: actions/checkout@v3
-#      with:
-#        fetch-depth: 0
-#    
-#    - name: Setup .NET Core 6.0
-#      uses: actions/setup-dotnet@v3
-#      with:
-#        dotnet-version: 6.0.x
-#    
-#    - name: Restore
-#      run: dotnet restore
-#    
-#    - name: Build
-#      run: dotnet build -c Release --no-restore
-#      
-#    - name: Run tests
-#      run: dotnet test -c Release --no-build ./DetectChanges.sln
-#    
+  build:
+    name: "Build"
+    needs: detect
+    if: needs.detect.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET Core 6.0
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Run tests
+      run: dotnet test -c Release --no-build ./DetectChanges.sln

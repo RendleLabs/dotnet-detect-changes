@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{61AF6E6D-A1E1-40B4-92F7-9E10DE9E5612}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\pr.yml = .github\workflows\pr.yml
+		.github\workflows\merge.yml = .github\workflows\merge.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{44EDA10A-A799-4175-9CC6-7CD27A58459F}"

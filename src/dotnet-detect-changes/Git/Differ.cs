@@ -46,7 +46,7 @@ public static class Differ
     private static TreeChanges? GetChanges(Repository repository, string fromCommit)
     {
         using var enumerator = repository.Commits.GetEnumerator();
-
+        
         // Newest commit is first in list, so cycle through looking for specified commit
         while (enumerator.MoveNext())
         {

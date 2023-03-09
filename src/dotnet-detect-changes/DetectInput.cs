@@ -37,11 +37,6 @@ public class DetectCommand
             return true;
         }
 
-        foreach (var changedFile in changedFiles)
-        {
-            Console.WriteLine(changedFile);
-        }
-
         foreach (var arg in _projects)
         {
             var filePath = Path.GetFullPath(arg);
