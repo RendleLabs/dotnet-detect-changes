@@ -35,13 +35,6 @@ public static class Differ
     {
         if (baseRef is { Length: > 0 } && headRef is { Length: > 0 })
         {
-            Console.WriteLine($"Checking {baseRef} against {headRef}");
-
-            foreach (var branch in repository.Branches)
-            {
-                Console.WriteLine(branch.CanonicalName);
-            }
-
             var baseBranch = repository.Branches[baseRef] ?? repository.Branches[$"refs/remotes/origin/{baseRef}"];
             var baseTree = baseBranch?.Tip?.Tree;
             var headBranch = repository.Branches[headRef] ?? repository.Branches[$"refs/remotes/origin/{headRef}"];
