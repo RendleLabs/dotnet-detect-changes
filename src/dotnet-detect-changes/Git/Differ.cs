@@ -47,19 +47,21 @@ public static class Differ
     {
         using var enumerator = repository.Commits.GetEnumerator();
 
+        // Newest commit is first in list, so cycle through looking for specified commit
         while (enumerator.MoveNext())
         {
             var commit = enumerator.Current;
             if (commit?.Id.Sha == fromCommit) break;
         }
 
+        // Then get the one before that, which is the base we're comparing to
         if (enumerator.MoveNext())
         {
             var previous = enumerator.Current;
 
             if (previous is not null)
             {
-                return repository.Diff.Compare<TreeChanges>(repository.Head.Tip.Tree, previous.Tree);
+                return repository.Diff.Compare<TreeChanges>(previous.Tree, repository.Head.Tip.Tree);
             }
         }
 
