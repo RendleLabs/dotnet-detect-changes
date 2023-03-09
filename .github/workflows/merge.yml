@@ -26,6 +26,9 @@ jobs:
       - name: Debug 2
         run: echo ID ${{ github.event.commits[0].id }} TREE_ID ${{ github.event.commits[0].tree_id }}
       
+      - name: Debug 3
+        run: echo REF ${{ github.event.ref }}
+      
       # - name: Run
       #   run: dotnet run --project ./src/dotnet-detect-changes/dotnet-detect-changes.csproj --base $GITHUB_BASE_REF --head $GITHUB_HEAD_REF ./test/ChangeDetector.Tests/ChangeDetector.Tests.csproj >> $GITHUB_OUTPUT
 
